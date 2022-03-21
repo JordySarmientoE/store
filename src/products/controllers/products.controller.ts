@@ -13,43 +13,42 @@ export class ProductsController {
     constructor(private productService: ProductsService) { }
 
     @Get()
-    getProducts(@Query('limit') limit = 100, @Query('offset') offset = 0, @Query('brand') brand: string) {
+    async getProducts() {
         return {
             msg: 'List products',
-            data: this.productService.findAll()
+            data: await this.productService.findAll()
         }
     }
 
     @Get(':id')
-    @HttpCode(HttpStatus.ACCEPTED)
-    getOne(@Param('id', ParseIntPipe) id: number) {
+    async getOne(@Param('id', ParseIntPipe) id: number) {
         return {
             msg: 'List product',
-            data: this.productService.findOne(id)
+            data: await this.productService.findOne(id)
         };
     }
 
     @Post()
-    create(@Body() payload: CreateProductDTO) {
+    async create(@Body() payload: CreateProductDTO) {
         return {
             msg: 'Create product',
-            data: this.productService.create(payload)
+            data: await this.productService.create(payload)
         }
     }
 
     @Put(':id')
-    update(@Param('id') id: number, @Body() payload: UpdateProductDTO) {
+    async update(@Param('id', ParseIntPipe) id: number, @Body() payload: UpdateProductDTO) {
         return {
-            id,
-            payload
+            message: 'Update product',
+            data: await this.productService.update(id, payload)
         }
     }
 
     @Delete(':id')
-    delete(@Param('id') id: number) {
+    async delete(@Param('id', ParseIntPipe) id: number) {
+        await this.productService.delete(id);
         return {
-            msg: 'Delete product',
-            id
+            msg: 'Delete product'
         }
     }
 }
