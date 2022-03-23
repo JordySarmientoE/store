@@ -30,7 +30,7 @@ export class UsersService {
 
     async create(payload: CreateUserDTO) {
         if (await this.findByEmail(payload.email)) {
-            throw new BadGatewayException();
+            throw new BadGatewayException(`Email ${payload.email} has been taken`);
         }
         const newUser = this.userRepository.create(payload);
         if (payload.customerId) {

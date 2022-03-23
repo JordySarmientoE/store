@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadGatewayException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from '../entities/category.entity';
 import { Repository } from 'typeorm';
@@ -23,6 +23,9 @@ export class CategoriesService {
     }
 
     async create(payload: CreateCategoryDTO) {
+        if(await this.findByName(payload.name)){
+            throw new BadGatewayException(`Category ${payload.name} has been taken`);
+        }
         const newCategory = this.categoryRepository.create(payload);
         return await this.categoryRepository.save(newCategory);
     }
@@ -45,5 +48,13 @@ export class CategoriesService {
 
     async findByIds(id: number[]) {
         return await this.categoryRepository.findByIds(id);
+    }
+
+    async findByName(name: string) {
+        return await this.categoryRepository.findOne({
+            where: {
+                name
+            }
+        })
     }
 }

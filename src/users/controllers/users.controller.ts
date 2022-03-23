@@ -21,7 +21,7 @@ export class UsersController {
     }
 
     @Get(':id')
-    @ApiOperation({ summary: 'List of user' })
+    @ApiOperation({ summary: 'List user' })
     async getOne(@Param('id', ParseIntPipe) id: number) {
         return {
             msg: 'List user',

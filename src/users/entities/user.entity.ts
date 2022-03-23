@@ -10,11 +10,11 @@ export class User {
     password: string;
     @Column({ type: 'varchar', length: 255 })
     role: string;
-    @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn({ name: 'create_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     createAt: Date;
-    @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn({ name: 'update_at', type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     updateAt: Date;
     @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
-    @JoinColumn()
+    @JoinColumn({ name: 'customer_id' })
     customer: Customer;
 }
