@@ -17,6 +17,7 @@ import { OrderItemService } from './services/order-item.service';
 @Module({
   controllers: [UsersController, CustomersController, OrdersController, OrderItemController],
   providers: [UsersService, CustomersService, OrdersService, OrderItemService],
-  imports: [ProductsModule, TypeOrmModule.forFeature([User, Customer, Order, OrderItem])]
+  imports: [ProductsModule, TypeOrmModule.forFeature([User, Customer, Order, OrderItem])],
+  exports: [UsersService]
 })
-export class UsersModule {}
+export class UsersModule { }

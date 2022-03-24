@@ -5,11 +5,7 @@ export default registerAs('config', () => {
         apiKey: process.env.API_KEY,
         port: process.env.PORT,
         postgres: {
-            name: process.env.POSTGRES_DB,
-            port: process.env.POSTGRES_PORT,
-            password: process.env.POSTGRES_PASSWORD,
-            host: process.env.POSTGRES_HOST,
-            user: process.env.POSTGRES_USER
+            DATABASE_URL: process.env.DATABASE_URL
         },
         mysql: {
             name: process.env.MYSQL_DATABASE,
@@ -18,6 +14,7 @@ export default registerAs('config', () => {
             host: process.env.MYSQL_HOST,
             user: process.env.MYSQL_USER
         },
-        database: process.env.DATABASE
+        database: process.env.DATABASE,
+        jwt_key: process.env.JWT_SECRET
     }
 })

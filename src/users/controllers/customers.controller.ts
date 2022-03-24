@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomersService } from '../services/customers.service';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { UpdateCustomerDTO, CreateCustomerDTO } from '../dtos/customers.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('customers')
 @Controller('customers')
 export class CustomersController {

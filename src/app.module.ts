@@ -10,6 +10,7 @@ import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
 
 import { environments } from './environments';
+import { AuthModule } from './auth/auth.module';
 import config from './config';
 import configSchema from './configSchema';
 
@@ -19,7 +20,7 @@ import configSchema from './configSchema';
     isGlobal: true,
     load: [config],
     validationSchema: configSchema
-  })],
+  }), AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

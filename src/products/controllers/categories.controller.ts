@@ -1,16 +1,18 @@
-import {
-    Body, Controller, Delete, Get, Param, Post, Put, Query, HttpStatus, HttpCode
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CategoriesService } from '../services/categories.service';
 import { ParseIntPipe } from '../../common/parse-int.pipe';
 import { CreateCategoryDTO, UpdateCategoryDTO } from '../dtos/category.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { Public } from 'src/auth/decorators/public.decorator';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
     constructor(private categoryService: CategoriesService) { }
 
+    @Public()
     @Get()
     @ApiOperation({ summary: 'List of categories' })
     async getUsers() {
@@ -20,6 +22,7 @@ export class CategoriesController {
         }
     }
 
+    @Public()
     @Get(':id')
     @ApiOperation({ summary: 'List of category' })
     async getOne(@Param('id', ParseIntPipe) id: number) {

@@ -1,18 +1,25 @@
 import {
-    Body, Controller, Delete, Get, Param, Post, Put, Query, HttpStatus, HttpCode
+    Body, Controller, Delete, Get, Param, Post, Put, Query, HttpStatus, HttpCode, UseGuards
 } from '@nestjs/common';
 import { CreateProductDTO, UpdateProductDTO } from 'src/products/dtos/products.dto';
 import { ParseIntPipe } from '../../common/parse-int.pipe'
 import { ProductsService } from '../services/products.service';
 import { ApiTags } from '@nestjs/swagger';
 import { FilterProductsDTO } from '../dtos/products.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/roles.model';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
 
     constructor(private productService: ProductsService) { }
 
+    @Public()
     @Get()
     async getProducts(@Query() params: FilterProductsDTO) {
         return {
@@ -21,6 +28,7 @@ export class ProductsController {
         }
     }
 
+    @Public()
     @Get(':id')
     async getOne(@Param('id', ParseIntPipe) id: number) {
         return {
@@ -29,6 +37,7 @@ export class ProductsController {
         };
     }
 
+    @Roles(Role.ADMIN)
     @Post()
     async create(@Body() payload: CreateProductDTO) {
         return {

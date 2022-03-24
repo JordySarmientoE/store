@@ -5,6 +5,7 @@ import { ProductsService } from '../../products/services/products.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CustomersService } from './customers.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -33,9 +34,11 @@ export class UsersService {
             throw new BadGatewayException(`Email ${payload.email} has been taken`);
         }
         const newUser = this.userRepository.create(payload);
+        const hashPassword = await bcrypt.hash(newUser.password, 10);
+        newUser.password = hashPassword;
         if (payload.customerId) {
             const customer = await this.customerService.findOne(payload.customerId);
-            if(!customer){
+            if (!customer) {
                 throw new NotFoundException('Customer not found');
             }
             newUser.customer = customer;
