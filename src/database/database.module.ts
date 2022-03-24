@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 const API_KEY = '1234567';
 const API_KEY_PROD = '7654321';
 
+
 @Global()
 @Module({
     imports: [
