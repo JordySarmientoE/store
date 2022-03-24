@@ -6,6 +6,7 @@ import { ConfigType } from '@nestjs/config';
 import config from '../../config';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @UseGuards(JwtAuthGuard)
 @ApiTags('users')
@@ -40,6 +41,7 @@ export class UsersController {
         };
     }
 
+    @Public()
     @Post()
     @ApiOperation({ summary: 'Create user' })
     async create(@Body() payload: CreateUserDTO) {
