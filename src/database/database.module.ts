@@ -20,7 +20,7 @@ const API_KEY_PROD = '7654321';
                     synchronize: false,
                     autoLoadEntities: true,
                     ssl: {
-                        rejectUnauthorized: false
+                        rejectUnauthorized: false 
                     }
                 }
             }
