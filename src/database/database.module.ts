@@ -19,9 +19,9 @@ const API_KEY_PROD = '7654321';
                     url: DATABASE_URL,
                     synchronize: false,
                     autoLoadEntities: true,
-                    ssl: {
+                    /* ssl: {
                         rejectUnauthorized: false 
-                    }
+                    } */
                 }
             }
         })

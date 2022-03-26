@@ -1,6 +1,24 @@
 version: '3.3'
 
 services:
+  dev:
+      container_name: "nodestore_dev"
+      environment:
+        - DATABASE_URL=postgres://root:123456@postgres/my_db
+        - PORT=3150
+      build: 
+        context: .
+        target: development
+        dockerfile: ./Dockerfile
+      volumes:
+        - ./:/home/node/app
+      depends_on:
+        - postgres
+      ports:
+        - "3150:3150"
+      networks:
+        - app-network  
+      command: "npm start"
   postgres:
     image: postgres:latest
     environment:
@@ -11,6 +29,8 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+    networks:
+        - app-network
 
   mysql:
     image: mysql:latest
@@ -41,3 +61,7 @@ services:
       - '8080:80'
     depends_on:
       - mysql
+  
+networks:
+  app-network:
+    external: true
