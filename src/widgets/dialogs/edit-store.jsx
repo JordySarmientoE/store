@@ -12,18 +12,15 @@ import { Field, Form, Formik } from 'formik';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
-    .email('Email inválido')
-    .required('El email es obligatorio'),
+    .email('Email inválido'),
   name: Yup.string().required('El nombre es obligatorio'),
   address: Yup.string().required('La dirección es obligatorio'),
   ruc: Yup.string()
-    .required('El ruc es obligatorio')
     .matches(
       /^[0-9]{11}$/,
       'El RUC debe tener exactamente 11 dígitos'
     ),
   phone: Yup.string()
-    .required('El número de teléfono es obligatorio')
     .matches(
       /^[0-9]{9}$/,
       'El número de teléfono debe tener exactamente 9 dígitos'

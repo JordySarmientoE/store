@@ -1,4 +1,4 @@
-import { UserCircleIcon, BuildingLibraryIcon, TableCellsIcon } from '@heroicons/react/24/solid';
+import { UserCircleIcon, TableCellsIcon, BuildingStorefrontIcon } from '@heroicons/react/24/solid';
 import { Roles } from '../utils/roles';
 import ListUsers from '@/pages/dashboard/list-users';
 import ListStores from '@/pages/dashboard/list-stores';
@@ -10,7 +10,7 @@ const icon = {
 };
 
 const routesUser = {
-  [Roles.ADMIN]: [
+  [Roles.ADMINISTRADOR]: [
     {
       icon: <UserCircleIcon {...icon} />,
       name: 'Listado de Usuarios',
@@ -18,13 +18,13 @@ const routesUser = {
       element: <ListUsers />,
     },
     {
-      icon: <BuildingLibraryIcon {...icon} />,
+      icon: <BuildingStorefrontIcon {...icon} />,
       name: 'Listado de Tiendas',
       path: '/tiendas',
       element: <ListStores />,
     },
   ],
-  [Roles.VENDOR]: [
+  [Roles.VENDEDOR]: [
     {
       icon: <TableCellsIcon {...icon} />,
       name: 'Listado de Productos',
@@ -38,7 +38,7 @@ const routesUser = {
       element: <ListProduct />,
     },
   ],
-  [Roles.BUYER]: [
+  [Roles.COMPRADOR]: [
     {
       icon: <TableCellsIcon {...icon} />,
       name: 'Perfil',

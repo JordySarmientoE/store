@@ -14,13 +14,11 @@ const ShopServices = {
     });
     return response;
   },
-  ListPaginated: async (token, page, rows) => {
+  ListPaginated: async (payload) => {
     const response = await Services.get({
       url: ServicesConstants.ShopPath.concat('/list'),
-      token,
       queryParams: {
-        page,
-        rows,
+        ...payload,
       },
     });
     return response;

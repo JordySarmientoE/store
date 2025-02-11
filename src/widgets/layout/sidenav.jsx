@@ -6,8 +6,9 @@ import { useControllerProvider, setOpenSidenav } from '@/context';
 import { getRoutesByRole } from '@/routes/routes';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Roles } from '@/utils/roles';
 
-export function Sidenav({ brandName }) {
+export function Sidenav() {
   const [controller, dispatch] = useControllerProvider();
   const { openSidenav } = controller;
   const [routes, setRoutes] = useState([]);
@@ -26,7 +27,7 @@ export function Sidenav({ brandName }) {
       <div className={`relative`}>
         <div className="py-6 px-8 text-center">
           <Typography variant="h6" color="blue-gray">
-            {brandName}
+            {user?.role === Roles.ADMINISTRADOR ? 'Administrador' : 'Vendedor'}
           </Typography>
         </div>
         <IconButton
@@ -69,15 +70,5 @@ export function Sidenav({ brandName }) {
     </aside>
   );
 }
-
-Sidenav.defaultProps = {
-  brandName: 'Easy Buy',
-};
-
-Sidenav.propTypes = {
-  brandName: PropTypes.string,
-};
-
-Sidenav.displayName = '/src/widgets/layout/sidnave.jsx';
 
 export default Sidenav;

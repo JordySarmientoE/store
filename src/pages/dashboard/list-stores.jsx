@@ -5,6 +5,10 @@ import {
   Typography,
   Chip,
   IconButton,
+  Input,
+  Button,
+  Select,
+  Option,
 } from '@material-tailwind/react';
 import { useEffect, useState } from 'react';
 import { ShopServices } from '@/services';
@@ -18,27 +22,33 @@ import {
 } from '@heroicons/react/24/solid';
 import { showConfirmDialog, showToast } from '@/utils/alerts';
 import EditStoreDialog from '@/widgets/dialogs/edit-store';
+import { Field, Form, Formik } from 'formik';
 
 export function ListStores() {
   const [pagination, setPagination] = useState({
+    page: 1,
+    search: {}
+  });
+  const [listStores, setListStores] = useState({
     total: 0,
     nroPages: 1,
-    page: 1,
     data: [],
   });
-  const [editStore, setEditStore] = useState(null);
-
   const itemsPerPage = 5;
+  const [editStore, setEditStore] = useState(null);
+  const initialSearch = { name: '', address: '', ruc: '', phone: '', email: '', status: '' };
 
   const getListOfStores = async (page) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await ShopServices.ListPaginated(token, page, itemsPerPage);
-      setPagination({
-        nroPages: res.nroPages,
-        total: res.total,
+      const res = await ShopServices.ListPaginated({
         page,
-        data: res.data,
+        rows: itemsPerPage,
+        ...pagination.search
+      });
+      setListStores({
+        total: res.total,
+        nroPages: res.nroPages,
+        data: res.data
       });
     } catch (error) {
       showToast('error', error?.message);
@@ -46,11 +56,14 @@ export function ListStores() {
   };
 
   useEffect(() => {
-    getListOfStores(1);
-  }, []);
+    getListOfStores(pagination.page);
+  }, [pagination]);
 
   const handlePageChange = async (page) => {
-    await getListOfStores(page);
+    setPagination({
+      ...pagination,
+      page
+    });
   };
 
   const enableStore = async (store) => {
@@ -61,6 +74,10 @@ export function ListStores() {
         try {
           const token = localStorage.getItem('token');
           await ShopServices.Enable(token, store.id);
+          setPagination({
+            ...pagination,
+            page: pagination.page
+          });
           await getListOfStores(pagination.page);
           showToast('success', `Se habilitó la tienda ${store.name}`);
         } catch (error) {
@@ -78,7 +95,10 @@ export function ListStores() {
         try {
           const token = localStorage.getItem('token');
           await ShopServices.Delete(token, store.id);
-          await getListOfStores(pagination.page);
+          setPagination({
+            ...pagination,
+            page: pagination.page
+          });
           showToast('success', `Se eliminó la tienda ${store.name}`);
         } catch (error) {
           showToast('error', error?.message);
@@ -97,7 +117,10 @@ export function ListStores() {
           try {
             const token = localStorage.getItem('token');
             await ShopServices.Edit(token, store.id, store);
-            await getListOfStores(pagination.page);
+            setPagination({
+              ...pagination,
+              page: pagination.page
+            });
             showToast('success', `Se editó la tienda ${store.name}`);
           } catch (error) {
             showToast('error', error?.message);
@@ -112,6 +135,13 @@ export function ListStores() {
     }
   };
 
+  const seachStore = async (values) => {
+    setPagination({
+      ...pagination,
+      search: { ...values }
+    });
+  }
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -120,6 +150,183 @@ export function ListStores() {
             Listado de Tiendas
           </Typography>
         </CardHeader>
+        <Formik initialValues={initialSearch} onSubmit={seachStore}>
+          {
+            ({ resetForm }) => (
+              <Form className='mx-4 mb-4'>
+                <div className="flex flex-wrap gap-4">
+                  <div className="w-full sm:w-[48%] lg:w-auto">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                      as="label"
+                      htmlFor="name"
+                    >
+                      Nombre
+                    </Typography>
+                    <Field
+                      as={Input}
+                      variant="outlined"
+                      placeholder="Tienda"
+                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                      name="name"
+                      id="name"
+                      labelProps={{
+                        className: 'before:content-none after:content-none',
+                      }}
+                      autoComplete="name"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[48%] lg:w-auto">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                      as="label"
+                      htmlFor="address"
+                    >
+                      Dirección
+                    </Typography>
+                    <Field
+                      as={Input}
+                      variant="outlined"
+                      placeholder="Mz...."
+                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                      name="address"
+                      id="address"
+                      labelProps={{
+                        className: 'before:content-none after:content-none',
+                      }}
+                      autoComplete="address"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[48%] lg:w-auto">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                      as="label"
+                      htmlFor="ruc"
+                    >
+                      RUC
+                    </Typography>
+                    <Field
+                      name="ruc"
+                    >
+                      {({ field, form }) => (
+                        <Input
+                          {...field}
+                          type="tel"
+                          id="ruc"
+                          maxLength="11"
+                          size="lg"
+                          placeholder="12345678910"
+                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            form.setFieldValue(field.name, value);
+                          }}
+                        />
+                      )}
+                    </Field>
+                  </div>
+                  <div className="w-full sm:w-[48%] lg:w-auto">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                      as="label"
+                      htmlFor="phone"
+                    >
+                      Teléfono
+                    </Typography>
+                    <Field
+                      name="phone"
+                    >
+                      {({ field, form }) => (
+                        <Input
+                          {...field}
+                          type="tel"
+                          id="phone"
+                          maxLength="9"
+                          size="lg"
+                          placeholder="12345678"
+                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            form.setFieldValue(field.name, value);
+                          }}
+                        />
+                      )}
+                    </Field>
+                  </div>
+                  <div className="w-full sm:w-[48%] lg:w-auto">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                      as="label"
+                      htmlFor="email"
+                    >
+                      Correo
+                    </Typography>
+                    <Field
+                      as={Input}
+                      variant="outlined"
+                      placeholder="example@gmail.com"
+                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                      name="email"
+                      id="email"
+                      labelProps={{
+                        className: 'before:content-none after:content-none',
+                      }}
+                      autoComplete="email"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[48%] lg:w-auto">
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-medium"
+                      as="label"
+                      htmlFor="status"
+                    >
+                      Estado
+                    </Typography>
+                    <Field name="status">
+                      {({ field, form }) => (
+                        <Select
+                          variant="outlined"
+                          className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                          id="status"
+                          autoComplete="status"
+                          value={field.value}
+                          onChange={(e) => form.setFieldValue(field.name, e)}
+                        >
+                          <Option value=''>TODOS</Option>
+                          <Option value='ENABLED'>DISPONIBLE</Option>
+                          <Option value='DISABLED'>INACTIVO</Option>
+                        </Select>
+                      )}
+                    </Field>
+                  </div>
+                  <div className="w-full sm:w-[48%] lg:w-auto flex gap-2 items-end">
+                    <Button fullWidth type="submit" color='indigo' className='h-auto' title='Buscar'>
+                      Buscar
+                    </Button>
+                    <Button fullWidth type='button' color='teal' className='h-auto' title='Limpiar' onClick={() => {
+                      resetForm();
+                      clearSearch();
+                    }}>
+                      Limpiar
+                    </Button>
+                  </div>
+                </div>
+              </Form>
+            )
+          }
+        </Formik>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-0">
           <table className="w-full min-w-[640px] table-auto">
             <thead>
@@ -148,8 +355,8 @@ export function ListStores() {
               </tr>
             </thead>
             <tbody>
-              {pagination.data.map((store, key) => {
-                const className = `py-3 px-5 ${key === pagination.data.length - 1
+              {listStores.data.map((store, key) => {
+                const className = `py-3 px-5 ${key === listStores.data.length - 1
                   ? ''
                   : 'border-b border-blue-gray-50'
                   }`;
@@ -227,9 +434,10 @@ export function ListStores() {
                         variant="gradient"
                         color="blue"
                         onClick={() => {
-                          setEditStore(store);
+                          setEditStore({ ...store });
                         }}
                         disabled={!store.status}
+                        title='Editar'
                       >
                         <PencilSquareIcon className="h-5 w-5 text-blue" />
                       </IconButton>
@@ -238,6 +446,7 @@ export function ListStores() {
                           variant="gradient"
                           color="red"
                           onClick={() => deleteStore(store)}
+                          title='Eliminar'
                         >
                           <TrashIcon className="h-5 w-5 text-red" />
                         </IconButton>
@@ -246,6 +455,7 @@ export function ListStores() {
                           variant="gradient"
                           color="green"
                           onClick={() => enableStore(store)}
+                          title='Habilitar'
                         >
                           <CheckCircleIcon className="h-5 w-5 text-green" />
                         </IconButton>
@@ -262,18 +472,20 @@ export function ListStores() {
             className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
             onClick={() => handlePageChange(pagination.page - 1)}
             disabled={pagination.page === 1}
+            title='Página anterior'
           >
             <BackwardIcon strokeWidth={2} className="h-5 w-5 text-inherit" />
           </button>
           <div>
             <span className="text-sm text-gray-600">
-              Página {pagination.page} de {pagination.nroPages}
+              Mostrando {(pagination.page - 1) * itemsPerPage + 1} - {Math.min(pagination.page * itemsPerPage, listStores.total)} de {listStores.total} tiendas
             </span>
           </div>
           <button
             className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
             onClick={() => handlePageChange(pagination.page + 1)}
-            disabled={pagination.page >= pagination.nroPages}
+            disabled={pagination.page >= listStores.nroPages}
+            title='Página siguiente'
           >
             <ForwardIcon strokeWidth={2} className="h-5 w-5 text-inherit" />
           </button>

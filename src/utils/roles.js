@@ -1,7 +1,7 @@
 const Roles = {
-  ADMIN: 'ADMIN',
-  VENDOR: 'VENDOR',
-  BUYER: 'BUYER',
+  ADMINISTRADOR: 'ADMIN',
+  VENDEDOR: 'VENDOR',
+  COMPRADOR: 'BUYER',
 };
 
 export { Roles };

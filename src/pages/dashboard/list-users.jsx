@@ -15,6 +15,7 @@ import { UserServices } from '@/services';
 import { toTitleCase } from '@/utils/functions.helper';
 import {
   BackwardIcon,
+  BuildingStorefrontIcon,
   CheckCircleIcon,
   ForwardIcon,
   PencilSquareIcon,
@@ -321,10 +322,10 @@ export function ListUsers() {
                     </Field>
                   </div>
                   <div className="w-full sm:w-[48%] lg:w-auto flex gap-2 items-end">
-                    <Button fullWidth type="submit" color='indigo' className='h-auto'>
+                    <Button fullWidth type="submit" color='indigo' className='h-auto' title='Buscar'>
                       Buscar
                     </Button>
-                    <Button fullWidth type='button' color='teal' className='h-auto' onClick={() => {
+                    <Button fullWidth type='button' color='teal' className='h-auto' title='Limpiar' onClick={() => {
                       resetForm();
                       clearSearch();
                     }}>
@@ -405,14 +406,14 @@ export function ListUsers() {
                         className="mb-1 gap-6 font-medium text-blue-gray-600"
                         as={'div'}
                       >
-                        {user.role === Roles.ADMIN ? (
+                        {user.role === Roles.ADMINISTRADOR ? (
                           <Chip
                             variant="outlined"
                             value="Administrador"
                             color="deep-orange"
                             className="inline"
                           />
-                        ) : user.role === Roles.VENDOR ? (
+                        ) : user.role === Roles.VENDEDOR ? (
                           <Chip
                             variant="outlined"
                             value="Vendedor"
@@ -465,17 +466,31 @@ export function ListUsers() {
                         variant="gradient"
                         color="blue"
                         onClick={() => {
-                          setEditUser(user);
+                          setEditUser({ ...user });
                         }}
                         disabled={!user.status}
+                        title='Editar'
                       >
                         <PencilSquareIcon className="h-5 w-5 text-blue" />
                       </IconButton>
+                      {
+                        user.role === Roles.VENDEDOR && (
+                          <IconButton
+                            variant="gradient"
+                            color="indigo"
+                            onClick={() => deleteUser(user)}
+                            title='Asignar Tienda'
+                          >
+                            <BuildingStorefrontIcon className="h-5 w-5 text-amber" />
+                          </IconButton>
+                        )
+                      }
                       {user.status ? (
                         <IconButton
                           variant="gradient"
                           color="red"
                           onClick={() => deleteUser(user)}
+                          title='Eliminar'
                         >
                           <TrashIcon className="h-5 w-5 text-red" />
                         </IconButton>
@@ -484,6 +499,7 @@ export function ListUsers() {
                           variant="gradient"
                           color="green"
                           onClick={() => enableUser(user)}
+                          title='Habilitar'
                         >
                           <CheckCircleIcon className="h-5 w-5 text-green" />
                         </IconButton>
@@ -500,18 +516,20 @@ export function ListUsers() {
             className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
             onClick={() => handlePageChange(pagination.page - 1)}
             disabled={pagination.page === 1}
+            title='Página anterior'
           >
             <BackwardIcon strokeWidth={2} className="h-5 w-5 text-inherit" />
           </button>
           <div>
             <span className="text-sm text-gray-600">
-              Página {pagination.page} de {listUsers.nroPages}
+              Mostrando {(pagination.page - 1) * itemsPerPage + 1} - {Math.min(pagination.page * itemsPerPage, listUsers.total)} de {listUsers.total} usuarios
             </span>
           </div>
           <button
             className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
             onClick={() => handlePageChange(pagination.page + 1)}
             disabled={pagination.page >= listUsers.nroPages}
+            title='Página siguiente'
           >
             <ForwardIcon strokeWidth={2} className="h-5 w-5 text-inherit" />
           </button>
