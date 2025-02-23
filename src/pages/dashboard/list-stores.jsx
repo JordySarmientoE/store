@@ -1,6 +1,4 @@
 import {
-  Card,
-  CardHeader,
   Typography,
   Chip,
   IconButton,
@@ -18,6 +16,7 @@ import { showConfirmDialog, showToast } from '@/utils/alerts';
 import EditStoreDialog from '@/widgets/dialogs/edit-store';
 import { Form, Formik } from 'formik';
 import { CardForm, InputForm, InputNumberForm, SelectForm, TableForm } from '@/components/ui';
+import { StatusSelect } from '@/utils/roles';
 
 export function ListStores() {
   const [pagination, setPagination] = useState({
@@ -110,24 +109,16 @@ export function ListStores() {
     });
   }
 
-  const statusValues = [
-    {
-      key: '',
-      label: 'TODOS'
-    },
-    {
-      key: 'ENABLED',
-      label: 'DISPONIBLE'
-    },
-    {
-      key: 'DISABLED',
-      label: 'INACTIVO'
-    }
-  ];
-
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
-      <CardForm name="Listado de Tiendas">
+      <CardForm
+        name="Listado de Tiendas"
+        buttons={[
+          <Button key="add" color="lightBlue" onClick={() => console.log("holi")}>
+            Agregar
+          </Button>
+        ]}
+      >
         <Formik initialValues={initialSearch} onSubmit={seachStore}>
           {
             ({ resetForm }) => (
@@ -138,7 +129,7 @@ export function ListStores() {
                   <InputNumberForm name="ruc" placeholder="12345678910" label="RUC" maxLength="11" />
                   <InputNumberForm name="phone" placeholder="123456789" label="Teléfono" maxLength="9" />
                   <InputForm name="email" placeholder="example@gmail.com" label="Correo" />
-                  <SelectForm name="status" label="Estado" selectValues={statusValues} />
+                  <SelectForm name="status" label="Estado" selectValues={StatusSelect} />
                   <div className="w-full sm:w-[48%] lg:w-auto flex gap-2 items-end">
                     <Button fullWidth type="submit" color='indigo' className='h-auto' title='Buscar'>
                       Buscar

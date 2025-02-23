@@ -2,9 +2,9 @@ import { Input, Typography } from '@material-tailwind/react';
 import { Field } from 'formik';
 import React from 'react'
 
-const InputNumberForm = ({ name, label, placeholder, maxLength }) => {
+const InputNumberForm = ({ name, label, placeholder, maxLength, touched, errors }) => {
   return (
-    <div className="w-full sm:w-[48%] lg:w-auto">
+    <div className="w-full lg:w-auto">
       <Typography
         variant="small"
         color="blue-gray"
@@ -33,6 +33,15 @@ const InputNumberForm = ({ name, label, placeholder, maxLength }) => {
           />
         )}
       </Field>
+      {touched && errors && (
+        <Typography
+          variant="small"
+          color="red"
+          className="text-xs font-medium"
+        >
+          {errors}
+        </Typography>
+      )}
     </div>
   )
 }

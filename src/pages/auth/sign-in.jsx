@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { login, logout } from '@/redux/authSlice';
 import { getRoutesByRole } from '@/routes/routes';
 import { showToast } from '@/utils/alerts';
+import { InputForm } from '@/components/ui';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -42,7 +43,7 @@ export function SignIn() {
   return (
     <section className="min-h-screen flex">
       <div className="flex w-full gap-6 p-4">
-        <div className="w-full lg:w-3/5 flex flex-col justify-center">
+        <div className="w-full flex flex-col justify-center">
           <div className="text-center">
             <Typography variant="h2" className="font-bold mb-4">
               Iniciar Sesión
@@ -62,72 +63,13 @@ export function SignIn() {
           >
             {({ touched, errors }) => (
               <Form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="email"
-                  >
-                    Correo
-                  </Typography>
-                  <Field
-                    as={Input}
-                    variant="outlined"
-                    placeholder="example@gmail.com"
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    name="email"
-                    id="email"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                    autoComplete="email"
-                  />
-                  {touched.email && errors.email && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.email}
-                    </Typography>
-                  )}
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputForm name="email" placeholder="example@gmail.com" label="Correo"
+                    touched={touched.email} errors={errors.email} />
                 </div>
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="password"
-                  >
-                    Contraseña
-                  </Typography>
-                  <Field
-                    as={Input}
-                    type="password"
-                    size="lg"
-                    name="password"
-                    id="password"
-                    placeholder="********"
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                    autoComplete="current-password"
-                  />
-                  {touched.password && errors.password && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.password}
-                    </Typography>
-                  )}
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputForm name="password" placeholder="********" label="Contraseña"
+                    touched={touched.password} errors={errors.password} type="password" />
                 </div>
                 <Button className="mt-6" fullWidth type="submit">
                   Iniciar Sesión

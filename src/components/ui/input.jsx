@@ -2,9 +2,9 @@ import { Input, Typography } from '@material-tailwind/react';
 import { Field } from 'formik';
 import React from 'react'
 
-const InputForm = ({ name, label, placeholder }) => {
+const InputForm = ({ name, label, placeholder, touched, errors, type }) => {
   return (
-    <div className="w-full sm:w-[48%] lg:w-auto">
+    <div className="w-full lg:w-auto">
       <Typography
         variant="small"
         color="blue-gray"
@@ -25,7 +25,17 @@ const InputForm = ({ name, label, placeholder }) => {
           className: 'before:content-none after:content-none',
         }}
         autoComplete={name}
+        type={type}
       />
+      {touched && errors && (
+        <Typography
+          variant="small"
+          color="red"
+          className="text-xs font-medium"
+        >
+          {errors}
+        </Typography>
+      )}
     </div>
   )
 }

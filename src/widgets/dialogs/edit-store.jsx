@@ -3,12 +3,12 @@ import {
   Button,
   Dialog,
   Typography,
-  Input,
   Card,
   CardBody,
 } from '@material-tailwind/react';
 import * as Yup from 'yup';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
+import { InputForm, InputNumberForm } from '@/components/ui';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -63,177 +63,26 @@ function EditStoreDialog({ editStore, setEditStore, updateStore }) {
               className="flex w-full"
             >
               {({ touched, errors }) => (
-                <Form className="mt-4 mb-2 mx-auto w-full">
+                <Form className="mt-4 mb-3 mx-auto w-full">
                   <div className="mb-1 flex flex-col gap-6">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="-mb-3 font-medium"
-                      as="label"
-                      htmlFor="name"
-                    >
-                      Nombre
-                    </Typography>
-                    <Field
-                      as={Input}
-                      name="name"
-                      id="name"
-                      size="lg"
-                      placeholder="John"
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                    />
-                    {touched.name && errors.name && (
-                      <Typography
-                        variant="small"
-                        color="red"
-                        className="text-xs font-medium"
-                        style={{ marginTop: '-20px' }}
-                      >
-                        {errors.name}
-                      </Typography>
-                    )}
+                    <InputForm name="name" placeholder="John" label="Nombre"
+                      touched={touched.name} errors={errors.name} />
                   </div>
-                  <div className="mb-1 flex flex-col gap-6">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="-mb-3 font-medium"
-                      as="label"
-                      htmlFor="address"
-                    >
-                      Dirección
-                    </Typography>
-                    <Field
-                      as={Input}
-                      name="address"
-                      id="address"
-                      size="lg"
-                      placeholder="Av.."
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                    />
-                    {touched.address && errors.address && (
-                      <Typography
-                        variant="small"
-                        color="red"
-                        className="text-xs font-medium"
-                        style={{ marginTop: '-20px' }}
-                      >
-                        {errors.address}
-                      </Typography>
-                    )}
+                  <div className="mb-3 flex flex-col gap-6">
+                    <InputForm name="address" placeholder="Av.." label="Dirección"
+                      touched={touched.address} errors={errors.address} />
                   </div>
-                  <div className="mb-1 flex flex-col gap-6">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="-mb-3 font-medium"
-                      as="label"
-                      htmlFor="ruc"
-                    >
-                      RUC
-                    </Typography>
-                    <Field
-                      as={Input}
-                      type="tel"
-                      id="ruc"
-                      maxLength="11"
-                      name="ruc"
-                      size="lg"
-                      placeholder="96839091211"
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                    />
-                    {touched.ruc && errors.ruc && (
-                      <Typography
-                        variant="small"
-                        color="red"
-                        className="text-xs font-medium"
-                        style={{ marginTop: '-20px' }}
-                      >
-                        {errors.ruc}
-                      </Typography>
-                    )}
+                  <div className="mb-3 flex flex-col gap-6">
+                    <InputNumberForm name='ruc' label='RUC' placeholder='96839091211' maxLength='11'
+                      touched={touched.ruc} errors={errors.ruc} />
                   </div>
-                  <div className="mb-1 flex flex-col gap-6">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="-mb-3 font-medium"
-                      as="label"
-                      htmlFor="phone"
-                    >
-                      Telefono
-                    </Typography>
-                    <Field
-                      name="phone"
-                    >
-                      {({ field, form }) => (
-                        <Input
-                          {...field}
-                          type="tel"
-                          id="phone"
-                          maxLength="9"
-                          size="lg"
-                          placeholder="123456789"
-                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, "");
-                            form.setFieldValue(field.name, value);
-                          }}
-                        />
-                      )}
-                    </Field>
-                    {touched.phone && errors.phone && (
-                      <Typography
-                        variant="small"
-                        color="red"
-                        className="text-xs font-medium"
-                        style={{ marginTop: '-20px' }}
-                      >
-                        {errors.phone}
-                      </Typography>
-                    )}
+                  <div className="mb-3 flex flex-col gap-6">
+                    <InputNumberForm name='phone' label='Teléfono' placeholder='123456789' maxLength='9'
+                      touched={touched.phone} errors={errors.phone} />
                   </div>
-                  <div className="mb-1 flex flex-col gap-6">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="-mb-3 font-medium"
-                      as="label"
-                      htmlFor="email"
-                    >
-                      Correo
-                    </Typography>
-                    <Field
-                      as={Input}
-                      name="email"
-                      id="email"
-                      size="lg"
-                      placeholder="example@gmail.com"
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                      autoComplete="email"
-                    />
-                    {touched.email && errors.email && (
-                      <Typography
-                        variant="small"
-                        color="red"
-                        className="text-xs font-medium"
-                        style={{ marginTop: '-20px' }}
-                      >
-                        {errors.email}
-                      </Typography>
-                    )}
+                  <div className="mb-3 flex flex-col gap-6">
+                    <InputForm name="email" placeholder="example@gmail.com" label="Correo"
+                      touched={touched.email} errors={errors.email} />
                   </div>
                   <div className="w-full flex gap-6">
                     <Button

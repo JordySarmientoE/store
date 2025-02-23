@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/redux/authSlice';
 import { showToast } from '@/utils/alerts';
+import { InputForm, InputNumberForm } from '@/components/ui';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -53,7 +54,7 @@ export function SignUp() {
             className="h-full w-full object-cover rounded-3xl"
           />
         </div>
-        <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
+        <div className="w-full flex flex-col items-center justify-center">
           <div className="text-center">
             <Typography variant="h2" className="font-bold mb-4">
               Únete hoy
@@ -71,177 +72,26 @@ export function SignUp() {
             onSubmit={handleRegister}
           >
             {({ touched, errors }) => (
-              <Form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="name"
-                  >
-                    Nombre
-                  </Typography>
-                  <Field
-                    as={Input}
-                    name="name"
-                    id="name"
-                    size="lg"
-                    placeholder="John"
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                  />
-                  {touched.name && errors.name && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.name}
-                    </Typography>
-                  )}
+              <Form className="mt-8 mb-3 mx-auto w-80 max-w-screen-lg lg:w-1/2">
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputForm name="name" placeholder="John" label="Nombre"
+                    touched={touched.name} errors={errors.name} />
                 </div>
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="lastname"
-                  >
-                    Apellido
-                  </Typography>
-                  <Field
-                    as={Input}
-                    name="lastname"
-                    id="lastname"
-                    size="lg"
-                    placeholder="Doe"
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                  />
-                  {touched.lastname && errors.lastname && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.lastname}
-                    </Typography>
-                  )}
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputForm name="lastname" placeholder="Doe" label="Apellido"
+                    touched={touched.lastname} errors={errors.lastname} />
                 </div>
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="phone"
-                  >
-                    Telefono
-                  </Typography>
-                  <Field
-                    name="phone"
-                  >
-                    {({ field, form }) => (
-                      <Input
-                        {...field}
-                        type="tel"
-                        id="phone"
-                        maxLength="9"
-                        size="lg"
-                        placeholder="123456789"
-                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "");
-                          form.setFieldValue(field.name, value);
-                        }}
-                      />
-                    )}
-                  </Field>
-                  {touched.phone && errors.phone && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.phone}
-                    </Typography>
-                  )}
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputNumberForm name='phone' label='Teléfono' placeholder='123456789' maxLength='9'
+                    touched={touched.phone} errors={errors.phone} />
                 </div>
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="email"
-                  >
-                    Correo
-                  </Typography>
-                  <Field
-                    as={Input}
-                    name="email"
-                    id="email"
-                    size="lg"
-                    placeholder="example@gmail.com"
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                    autoComplete="email"
-                  />
-                  {touched.email && errors.email && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.email}
-                    </Typography>
-                  )}
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputForm name="email" placeholder="example@gmail.com" label="Correo"
+                    touched={touched.email} errors={errors.email} />
                 </div>
-                <div className="mb-1 flex flex-col gap-6">
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="-mb-3 font-medium"
-                    as="label"
-                    htmlFor="password"
-                  >
-                    Contraseña
-                  </Typography>
-                  <Field
-                    as={Input}
-                    type="password"
-                    name="password"
-                    id="password"
-                    size="lg"
-                    placeholder="********"
-                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                    labelProps={{
-                      className: 'before:content-none after:content-none',
-                    }}
-                    autoComplete="current-password"
-                  />
-                  {touched.password && errors.password && (
-                    <Typography
-                      variant="small"
-                      color="red"
-                      className="text-xs font-medium"
-                      style={{ marginTop: '-20px' }}
-                    >
-                      {errors.password}
-                    </Typography>
-                  )}
+                <div className="mb-3 flex flex-col gap-6">
+                  <InputForm name="password" placeholder="********" label="Contraseña"
+                    touched={touched.password} errors={errors.password} type="password" />
                 </div>
                 <Button className="mt-6" fullWidth type="submit">
                   Registrar ahora

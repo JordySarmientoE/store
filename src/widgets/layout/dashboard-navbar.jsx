@@ -48,7 +48,7 @@ export function DashboardNavbar() {
     try {
       setEditUser(null);
       showConfirmDialog({
-        icon: 'error',
+        icon: 'warning',
         title: `¿Desea editar su usuario?`,
         onConfirm: async () => {
           try {
