@@ -4,6 +4,7 @@ import ListUsers from '@/pages/dashboard/list-users';
 import ListStores from '@/pages/dashboard/list-stores';
 import ListProduct from '@/pages/dashboard/list-products';
 import { Profile } from '@/pages/dashboard';
+import ListCategories from '@/pages/dashboard/list-categories';
 
 const icon = {
   className: 'w-5 h-5 text-inherit',
@@ -35,7 +36,7 @@ const routesUser = {
       icon: <TableCellsIcon {...icon} />,
       name: 'Listado de Categorias',
       path: '/categorias',
-      element: <ListProduct />,
+      element: <ListCategories />,
     },
   ],
   [Roles.COMPRADOR]: [

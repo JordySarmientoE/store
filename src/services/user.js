@@ -33,6 +33,10 @@ const UserServices = {
     });
   },
   Edit: async (token, userId, body) => {
+    let bodyUser = { ...body };
+    if (!bodyUser.password) {
+      delete bodyUser.password;
+    }
     await Services.put({
       url: ServicesConstants.UserPath.concat(`/edit/${userId}`),
       token,

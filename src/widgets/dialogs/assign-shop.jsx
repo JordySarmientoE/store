@@ -26,6 +26,7 @@ const AssignShop = ({ assignShopUser, setAssignShopUser, assignShop }) => {
 
   useEffect(() => {
     setSelectedShop(null);
+    if(!searchTerm) return;
     const delaySearch = setTimeout(async () => {
       const shops = await ShopServices.ListPaginated({
         page: 1,

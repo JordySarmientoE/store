@@ -182,7 +182,7 @@ function EditStoreDialog({ editStore, setEditStore, updateStore }) {
                           id="phone"
                           maxLength="9"
                           size="lg"
-                          placeholder="12345678"
+                          placeholder="123456789"
                           className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                           onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, "");

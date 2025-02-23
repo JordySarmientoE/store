@@ -15,7 +15,7 @@ const validationSchema = Yup.object().shape({
     .email('Email inválido')
     .required('El email es obligatorio'),
   password: Yup.string()
-    .required('La contraseña es obligatoria')
+    .optional('La contraseña es opcional')
     .min(5, 'La contraseña debe tener al menos 5 caracteres'),
   name: Yup.string().required('El nombre es obligatorio'),
   lastname: Yup.string().required('El apellido es obligatorio'),
@@ -70,14 +70,14 @@ function EditUserDialog({ editUser, setEditUser, updateUser }) {
                       color="blue-gray"
                       className="-mb-3 font-medium"
                       as="label"
-                      htmlFor="name"
+                      htmlFor="nameEdit"
                     >
                       Nombre
                     </Typography>
                     <Field
                       as={Input}
                       name="name"
-                      id="name"
+                      id="nameEdit"
                       size="lg"
                       placeholder="John"
                       className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -102,14 +102,14 @@ function EditUserDialog({ editUser, setEditUser, updateUser }) {
                       color="blue-gray"
                       className="-mb-3 font-medium"
                       as="label"
-                      htmlFor="lastname"
+                      htmlFor="lastnameEdit"
                     >
                       Apellido
                     </Typography>
                     <Field
                       as={Input}
                       name="lastname"
-                      id="lastname"
+                      id="lastnameEdit"
                       size="lg"
                       placeholder="Doe"
                       className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -134,7 +134,7 @@ function EditUserDialog({ editUser, setEditUser, updateUser }) {
                       color="blue-gray"
                       className="-mb-3 font-medium"
                       as="label"
-                      htmlFor="phone"
+                      htmlFor="phoneEdit"
                     >
                       Telefono
                     </Typography>
@@ -145,10 +145,10 @@ function EditUserDialog({ editUser, setEditUser, updateUser }) {
                         <Input
                           {...field}
                           type="tel"
-                          id="phone"
+                          id="phoneEdit"
                           maxLength="9"
                           size="lg"
-                          placeholder="12345678"
+                          placeholder="123456789"
                           className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                           onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, "");
@@ -174,14 +174,14 @@ function EditUserDialog({ editUser, setEditUser, updateUser }) {
                       color="blue-gray"
                       className="-mb-3 font-medium"
                       as="label"
-                      htmlFor="email"
+                      htmlFor="emailEdit"
                     >
                       Correo
                     </Typography>
                     <Field
                       as={Input}
                       name="email"
-                      id="email"
+                      id="emailEdit"
                       size="lg"
                       placeholder="example@gmail.com"
                       className=" !border-t-blue-gray-200 focus:!border-t-gray-900"

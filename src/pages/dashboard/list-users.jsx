@@ -76,7 +76,7 @@ export function ListUsers() {
       setEditUser(null);
       const usuario = `${toTitleCase(user.name)} ${toTitleCase(user.lastname)}`;
       showConfirmDialog({
-        icon: 'error',
+        icon: 'warning',
         title: `¿Desea editar el usuario ${usuario}?`,
         onConfirm: async () => {
           try {
@@ -103,7 +103,7 @@ export function ListUsers() {
   const deleteUser = async (user) => {
     const usuario = `${toTitleCase(user.name)} ${toTitleCase(user.lastname)}`;
     showConfirmDialog({
-      icon: 'error',
+      icon: 'warning',
       title: `¿Desea eliminar el usuario ${usuario}?`,
       onConfirm: async () => {
         try {
@@ -124,7 +124,7 @@ export function ListUsers() {
   const enableUser = async (user) => {
     const usuario = `${toTitleCase(user.name)} ${toTitleCase(user.lastname)}`;
     showConfirmDialog({
-      icon: 'success',
+      icon: 'warning',
       title: `¿Desea habilitar el usuario ${usuario}?`,
       onConfirm: async () => {
         try {
@@ -288,7 +288,7 @@ export function ListUsers() {
                           id="phone"
                           maxLength="9"
                           size="lg"
-                          placeholder="12345678"
+                          placeholder="123456789"
                           className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
                           onChange={(e) => {
                             const value = e.target.value.replace(/\D/g, "");

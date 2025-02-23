@@ -1,28 +1,23 @@
 import {
   Card,
   CardHeader,
-  CardBody,
   Typography,
   Chip,
   IconButton,
-  Input,
   Button,
-  Select,
-  Option,
 } from '@material-tailwind/react';
 import { useEffect, useState } from 'react';
 import { ShopServices } from '@/services';
 import { toTitleCase } from '@/utils/functions.helper';
 import {
-  BackwardIcon,
   CheckCircleIcon,
-  ForwardIcon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
 import { showConfirmDialog, showToast } from '@/utils/alerts';
 import EditStoreDialog from '@/widgets/dialogs/edit-store';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
+import { CardForm, InputForm, InputNumberForm, SelectForm, TableForm } from '@/components/ui';
 
 export function ListStores() {
   const [pagination, setPagination] = useState({
@@ -66,73 +61,46 @@ export function ListStores() {
     });
   };
 
-  const enableStore = async (store) => {
-    showConfirmDialog({
-      icon: 'success',
-      title: `¿Desea habilitar la tienda ${store.name}?`,
-      onConfirm: async () => {
-        try {
-          const token = localStorage.getItem('token');
-          await ShopServices.Enable(token, store.id);
-          setPagination({
-            ...pagination,
-            page: pagination.page
-          });
-          await getListOfStores(pagination.page);
-          showToast('success', `Se habilitó la tienda ${store.name}`);
-        } catch (error) {
-          showToast('error', error?.message);
-        }
+  const handleStoreAction = async (action, store) => {
+    const actions = {
+      enable: {
+        service: ShopServices.Enable,
+        message: `Se habilitó la tienda ${store.name}`,
+        title: `¿Desea habilitar la tienda ${store.name}?`
       },
-    });
-  };
-
-  const deleteStore = async (store) => {
-    showConfirmDialog({
-      icon: 'error',
-      title: `¿Desea eliminar la tienda ${store.name}?`,
-      onConfirm: async () => {
-        try {
-          const token = localStorage.getItem('token');
-          await ShopServices.Delete(token, store.id);
-          setPagination({
-            ...pagination,
-            page: pagination.page
-          });
-          showToast('success', `Se eliminó la tienda ${store.name}`);
-        } catch (error) {
-          showToast('error', error?.message);
-        }
+      delete: {
+        service: ShopServices.Delete,
+        message: `Se eliminó la tienda ${store.name}`,
+        title: `¿Desea eliminar la tienda ${store.name}?`
       },
-    });
-  };
+      update: {
+        service: ShopServices.Edit,
+        message: `Se editó la tienda ${store.name}`,
+        title: `¿Desea editar la tienda ${store.name}?`
+      }
+    };
 
-  const updateStore = async (store) => {
-    try {
+    if (!actions[action]) return;
+    const isUpdateAction = action === 'update';
+
+    if (isUpdateAction) {
       setEditStore(null);
-      showConfirmDialog({
-        icon: 'error',
-        title: `¿Desea editar la tienda ${store.name}?`,
-        onConfirm: async () => {
-          try {
-            const token = localStorage.getItem('token');
-            await ShopServices.Edit(token, store.id, store);
-            setPagination({
-              ...pagination,
-              page: pagination.page
-            });
-            showToast('success', `Se editó la tienda ${store.name}`);
-          } catch (error) {
-            showToast('error', error?.message);
-          }
-        },
-        onClose: () => {
-          setEditStore(store);
-        },
-      });
-    } catch (error) {
-      showToast('error', error?.message);
     }
+    showConfirmDialog({
+      icon: 'warning',
+      title: actions[action].title,
+      onConfirm: async () => {
+        try {
+          const token = localStorage.getItem('token');
+          await actions[action].service(token, store.id, store);
+          setPagination((prev) => ({ ...prev, page: prev.page }));
+          showToast('success', actions[action].message);
+        } catch (error) {
+          showToast('error', error?.message);
+        }
+      },
+      onClose: isUpdateAction ? () => setEditStore(store) : undefined,
+    });
   };
 
   const seachStore = async (values) => {
@@ -142,175 +110,35 @@ export function ListStores() {
     });
   }
 
+  const statusValues = [
+    {
+      key: '',
+      label: 'TODOS'
+    },
+    {
+      key: 'ENABLED',
+      label: 'DISPONIBLE'
+    },
+    {
+      key: 'DISABLED',
+      label: 'INACTIVO'
+    }
+  ];
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card>
-        <CardHeader variant="gradient" color="blue" className="mb-4 p-6">
-          <Typography variant="h6" color="white">
-            Listado de Tiendas
-          </Typography>
-        </CardHeader>
+      <CardForm name="Listado de Tiendas">
         <Formik initialValues={initialSearch} onSubmit={seachStore}>
           {
             ({ resetForm }) => (
               <Form className='mx-4 mb-4'>
                 <div className="flex flex-wrap gap-4">
-                  <div className="w-full sm:w-[48%] lg:w-auto">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                      as="label"
-                      htmlFor="name"
-                    >
-                      Nombre
-                    </Typography>
-                    <Field
-                      as={Input}
-                      variant="outlined"
-                      placeholder="Tienda"
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      name="name"
-                      id="name"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                      autoComplete="name"
-                    />
-                  </div>
-                  <div className="w-full sm:w-[48%] lg:w-auto">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                      as="label"
-                      htmlFor="address"
-                    >
-                      Dirección
-                    </Typography>
-                    <Field
-                      as={Input}
-                      variant="outlined"
-                      placeholder="Mz...."
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      name="address"
-                      id="address"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                      autoComplete="address"
-                    />
-                  </div>
-                  <div className="w-full sm:w-[48%] lg:w-auto">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                      as="label"
-                      htmlFor="ruc"
-                    >
-                      RUC
-                    </Typography>
-                    <Field
-                      name="ruc"
-                    >
-                      {({ field, form }) => (
-                        <Input
-                          {...field}
-                          type="tel"
-                          id="ruc"
-                          maxLength="11"
-                          size="lg"
-                          placeholder="12345678910"
-                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, "");
-                            form.setFieldValue(field.name, value);
-                          }}
-                        />
-                      )}
-                    </Field>
-                  </div>
-                  <div className="w-full sm:w-[48%] lg:w-auto">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                      as="label"
-                      htmlFor="phone"
-                    >
-                      Teléfono
-                    </Typography>
-                    <Field
-                      name="phone"
-                    >
-                      {({ field, form }) => (
-                        <Input
-                          {...field}
-                          type="tel"
-                          id="phone"
-                          maxLength="9"
-                          size="lg"
-                          placeholder="12345678"
-                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, "");
-                            form.setFieldValue(field.name, value);
-                          }}
-                        />
-                      )}
-                    </Field>
-                  </div>
-                  <div className="w-full sm:w-[48%] lg:w-auto">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                      as="label"
-                      htmlFor="email"
-                    >
-                      Correo
-                    </Typography>
-                    <Field
-                      as={Input}
-                      variant="outlined"
-                      placeholder="example@gmail.com"
-                      className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                      name="email"
-                      id="email"
-                      labelProps={{
-                        className: 'before:content-none after:content-none',
-                      }}
-                      autoComplete="email"
-                    />
-                  </div>
-                  <div className="w-full sm:w-[48%] lg:w-auto">
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium"
-                      as="label"
-                      htmlFor="status"
-                    >
-                      Estado
-                    </Typography>
-                    <Field name="status">
-                      {({ field, form }) => (
-                        <Select
-                          variant="outlined"
-                          className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                          id="status"
-                          autoComplete="status"
-                          value={field.value}
-                          onChange={(e) => form.setFieldValue(field.name, e)}
-                        >
-                          <Option value=''>TODOS</Option>
-                          <Option value='ENABLED'>DISPONIBLE</Option>
-                          <Option value='DISABLED'>INACTIVO</Option>
-                        </Select>
-                      )}
-                    </Field>
-                  </div>
+                  <InputForm name="name" placeholder="Tienda" label="Nombre" />
+                  <InputForm name="address" placeholder="Mz...." label="Dirección" />
+                  <InputNumberForm name="ruc" placeholder="12345678910" label="RUC" maxLength="11" />
+                  <InputNumberForm name="phone" placeholder="123456789" label="Teléfono" maxLength="9" />
+                  <InputForm name="email" placeholder="example@gmail.com" label="Correo" />
+                  <SelectForm name="status" label="Estado" selectValues={statusValues} />
                   <div className="w-full sm:w-[48%] lg:w-auto flex gap-2 items-end">
                     <Button fullWidth type="submit" color='indigo' className='h-auto' title='Buscar'>
                       Buscar
@@ -327,174 +155,60 @@ export function ListStores() {
             )
           }
         </Formik>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-0">
-          <table className="w-full min-w-[640px] table-auto">
-            <thead>
-              <tr>
-                {[
-                  'Nombre',
-                  'Dirección',
-                  'RUC',
-                  'Teléfono',
-                  'Correo',
-                  'Estado',
-                  '',
-                ].map((el) => (
-                  <th
-                    key={el}
-                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+        <TableForm pagination={pagination} handlePageChange={handlePageChange} itemsPerPage={itemsPerPage} listItems={listStores}
+          columns={[
+            { label: "Nombre", render: (store) => <Typography variant="small" className="gap-6 font-medium text-blue-gray-600 font-bold titlecase">{toTitleCase(store.name)}</Typography> },
+            { label: "Dirección", render: (store) => <Typography variant="small" className="gap-6 font-medium text-blue-gray-600">{store.address}</Typography> },
+            { label: "RUC", render: (store) => <Typography variant="small" className="gap-6 font-medium text-blue-gray-600">{store.ruc}</Typography> },
+            { label: "Teléfono", render: (store) => <Typography variant="small" className="gap-6 font-medium text-blue-gray-600">{store.phone}</Typography> },
+            { label: "Email", render: (store) => <Typography variant="small" className="gap-6 font-medium text-blue-gray-600">{store.email || ''}</Typography> },
+            {
+              label: "Estado",
+              render: (store) => store.status ?
+                <Chip variant="outlined" value="Disponible" color="green" className="inline" /> :
+                <Chip variant="outlined" value="Inactivo" color="red" className="inline" />
+            },
+            {
+              label: "Acciones",
+              render: (store) => (
+                <div className="flex gap-2">
+                  <IconButton
+                    variant="gradient"
+                    color="blue"
+                    onClick={() => setEditStore({ ...store })}
+                    disabled={!store.status}
+                    title="Editar"
                   >
-                    <Typography
-                      variant="small"
-                      className="font-bold uppercase text-blue-gray-400"
+                    <PencilSquareIcon className="h-5 w-5 text-blue" />
+                  </IconButton>
+                  {store.status ? (
+                    <IconButton
+                      variant="gradient"
+                      color="red"
+                      onClick={() => handleStoreAction("delete", store)}
+                      title="Eliminar"
                     >
-                      {el}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {listStores.data.map((store, key) => {
-                const className = `py-3 px-5 ${key === listStores.data.length - 1
-                  ? ''
-                  : 'border-b border-blue-gray-50'
-                  }`;
-
-                return (
-                  <tr key={store.id} className='hover:bg-blue-gray-50 hover:cursor-pointer'>
-                    <td className={className}>
-                      <div className="flex items-center gap-4">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold titlecase"
-                        >
-                          {toTitleCase(store.name)}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={className}>
-                      <Typography
-                        variant="small"
-                        className="gap-6 font-medium text-blue-gray-600"
-                      >
-                        {store.address}
-                      </Typography>
-                    </td>
-                    <td className={className}>
-                      <Typography
-                        variant="small"
-                        className="mb-1 block gap-6 font-medium text-blue-gray-600"
-                      >
-                        {store.ruc}
-                      </Typography>
-                    </td>
-                    <td className={className}>
-                      <Typography
-                        variant="small"
-                        className="gap-6 font-medium text-blue-gray-600"
-                      >
-                        {store.phone}
-                      </Typography>
-                    </td>
-                    <td className={className}>
-                      <Typography
-                        variant="small"
-                        className="gap-6 font-medium text-blue-gray-600"
-                      >
-                        {store.email || ''}
-                      </Typography>
-                    </td>
-                    <td className={className}>
-                      <Typography
-                        variant="small"
-                        className="mb-1 block gap-6 font-medium text-blue-gray-600"
-                        as={'div'}
-                      >
-                        {store.status ? (
-                          <Chip
-                            variant="outlined"
-                            value="Disponible"
-                            color="green"
-                            className="inline"
-                          />
-                        ) : (
-                          <Chip
-                            variant="outlined"
-                            value="Inactivo"
-                            color="red"
-                            className="inline"
-                          />
-                        )}
-                      </Typography>
-                    </td>
-                    <td className={`${className} flex gap-2`}>
-                      <IconButton
-                        variant="gradient"
-                        color="blue"
-                        onClick={() => {
-                          setEditStore({ ...store });
-                        }}
-                        disabled={!store.status}
-                        title='Editar'
-                      >
-                        <PencilSquareIcon className="h-5 w-5 text-blue" />
-                      </IconButton>
-                      {store.status ? (
-                        <IconButton
-                          variant="gradient"
-                          color="red"
-                          onClick={() => deleteStore(store)}
-                          title='Eliminar'
-                        >
-                          <TrashIcon className="h-5 w-5 text-red" />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          variant="gradient"
-                          color="green"
-                          onClick={() => enableStore(store)}
-                          title='Habilitar'
-                        >
-                          <CheckCircleIcon className="h-5 w-5 text-green" />
-                        </IconButton>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </CardBody>
-        <div className="flex justify-between items-center my-2 mx-4">
-          <button
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
-            onClick={() => handlePageChange(pagination.page - 1)}
-            disabled={pagination.page === 1}
-            title='Página anterior'
-          >
-            <BackwardIcon strokeWidth={2} className="h-5 w-5 text-inherit" />
-          </button>
-          <div>
-            <span className="text-sm text-gray-600">
-              Mostrando {(pagination.page - 1) * itemsPerPage + 1} - {Math.min(pagination.page * itemsPerPage, listStores.total)} de {listStores.total} tiendas
-            </span>
-          </div>
-          <button
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-blue-300"
-            onClick={() => handlePageChange(pagination.page + 1)}
-            disabled={pagination.page >= listStores.nroPages}
-            title='Página siguiente'
-          >
-            <ForwardIcon strokeWidth={2} className="h-5 w-5 text-inherit" />
-          </button>
-        </div>
-      </Card>
+                      <TrashIcon className="h-5 w-5 text-red" />
+                    </IconButton>
+                  ) : (
+                    <IconButton
+                      variant="gradient"
+                      color="green"
+                      onClick={() => handleStoreAction("enable", store)}
+                      title="Habilitar"
+                    >
+                      <CheckCircleIcon className="h-5 w-5 text-green" />
+                    </IconButton>
+                  )}
+                </div>
+              ),
+            },
+          ]} />
+      </CardForm>
       <EditStoreDialog
         editStore={editStore}
         setEditStore={setEditStore}
-        updateStore={updateStore}
+        updateStore={(store) => handleStoreAction('update', store)}
       />
     </div>
   );

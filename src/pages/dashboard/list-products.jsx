@@ -57,7 +57,7 @@ export function ListProduct() {
       setEditUser(null);
       const usuario = `${toTitleCase(product.name)} ${toTitleCase(product.lastname)}`;
       showConfirmDialog({
-        icon: 'error',
+        icon: 'warning',
         title: `¿Desea editar el usuario ${usuario}?`,
         onConfirm: async () => {
           try {
@@ -80,7 +80,7 @@ export function ListProduct() {
 
   const deleteProduct = async (product) => {
     showConfirmDialog({
-      icon: 'error',
+      icon: 'warning',
       title: `¿Desea eliminar el producto ${toTitleCase(product.name)}?`,
       onConfirm: async () => {
         try {
@@ -98,7 +98,7 @@ export function ListProduct() {
   const enableUser = async (product) => {
     const usuario = `${toTitleCase(product.name)} ${toTitleCase(product.lastname)}`;
     showConfirmDialog({
-      icon: 'success',
+      icon: 'warning',
       title: `¿Desea habilitar el usuario ${usuario}?`,
       onConfirm: async () => {
         try {
