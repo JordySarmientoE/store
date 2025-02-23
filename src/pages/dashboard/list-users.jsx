@@ -11,7 +11,7 @@ import {
   Button,
 } from '@material-tailwind/react';
 import { useEffect, useState } from 'react';
-import { UserServices } from '@/services';
+import { ShopServices, UserServices } from '@/services';
 import { toTitleCase } from '@/utils/functions.helper';
 import {
   BackwardIcon,
@@ -25,6 +25,7 @@ import { showConfirmDialog, showToast } from '@/utils/alerts';
 import EditUserDialog from '@/widgets/dialogs/edit-user';
 import { Roles } from '@/utils/roles';
 import { Field, Form, Formik } from 'formik';
+import AssignShop from '@/widgets/dialogs/assign-shop';
 
 export function ListUsers() {
   const [pagination, setPagination] = useState({
@@ -38,6 +39,7 @@ export function ListUsers() {
   });
   const itemsPerPage = 5;
   const [editUser, setEditUser] = useState(null);
+  const [assignShopUser, setAssignShopUser] = useState(null);
   const initialSearch = { name: '', lastname: '', email: '', role: '', status: '', phone: '' };
 
   const getListOfUsers = async (page) => {
@@ -139,6 +141,36 @@ export function ListUsers() {
       },
     });
   };
+
+  const assignShop = async (shop) => {
+    try {
+      const user = { ...assignShopUser };
+      setAssignShopUser(null);
+      const usuario = `${toTitleCase(user.name)} ${toTitleCase(user.lastname)}`;
+      showConfirmDialog({
+        icon: 'error',
+        title: `¿Desea asignar la tienda ${shop?.name} al usuario ${usuario}?`,
+        onConfirm: async () => {
+          try {
+            const token = localStorage.getItem('token');
+            await ShopServices.AssignShop(token, user.id, shop.id);
+            setPagination({
+              ...pagination,
+              page: pagination.page
+            });
+            showToast('success', `Se asignó la tienda al usuario ${usuario}`);
+          } catch (error) {
+            showToast('error', error?.message);
+          }
+        },
+        onClose: () => {
+          setEditUser(user);
+        },
+      });
+    } catch (error) {
+      showToast('error', error?.message);
+    }
+  }
 
   const searchUser = async (values) => {
     setPagination({
@@ -478,7 +510,7 @@ export function ListUsers() {
                           <IconButton
                             variant="gradient"
                             color="indigo"
-                            onClick={() => deleteUser(user)}
+                            onClick={() => setAssignShopUser(user)}
                             title='Asignar Tienda'
                           >
                             <BuildingStorefrontIcon className="h-5 w-5 text-amber" />
@@ -539,6 +571,11 @@ export function ListUsers() {
         editUser={editUser}
         setEditUser={setEditUser}
         updateUser={updateUser}
+      />
+      <AssignShop
+        assignShopUser={assignShopUser}
+        setAssignShopUser={setAssignShopUser}
+        assignShop={assignShop}
       />
     </div>
   );

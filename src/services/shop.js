@@ -45,6 +45,17 @@ const ShopServices = {
     });
     return response;
   },
+  AssignShop: async (token, userId, shopId) => {
+    const response = await Services.post({
+      url: ServicesConstants.ShopPath.concat(`/assign-shop`),
+      token,
+      body: {
+        userId,
+        shopId,
+      },
+    });
+    return response;
+  },
 };
 
 export default ShopServices;
